@@ -1,5 +1,4 @@
 import { getSession } from 'next-auth/react'
-import cache from 'memory-cache'
 import Profile from 'components/Profile'
 import { selectUserFollowingSpotifyIds } from 'lib/db'
 import { getArtistsInfo } from 'lib/spotify'
@@ -21,12 +20,7 @@ export const getServerSideProps = async ({ req }) => {
 	}
 
 	const { user } = serverSession
-	const { email } = user
-	let followings = cache.get(email)
-	if (!followings || followings.length === 0) {
-		followings = await getFollowings(user)
-		cache.put(email, followings)
-	}
+	const followings = await getFollowings(user)
 
 	return {
 		props: {
