@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react'
-import Link from 'components/Link'
 import { Text, VStack } from '@chakra-ui/layout'
-import { Loading } from 'components/Loading'
+import Link from 'components/Link'
+import Loading from 'components/Loading'
 
 const PageRouter = () => {
 	const { status } = useSession()
