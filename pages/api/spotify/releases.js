@@ -8,6 +8,7 @@ import {
 	selectUsersByIds,
 	insertArtistReleases
 } from 'lib/db'
+import { sendEmail } from 'lib/email'
 
 export default async (req, res) => {
 	if (req.method !== 'GET') return res.status(200).json({ message: 'OK' })
@@ -16,14 +17,9 @@ export default async (req, res) => {
 		const releaseCountUpdateRequests = []
 		const artistReleases = new Map()
 
-		let idx = 0
 		const artists = await selectAllArtists()
 		for (const artist of artists) {
 			const { name: artistName, spotifyId: artistSpotifyId } = artist
-
-			console.log(artistName)
-			idx++
-			if (idx === 2) break
 
 			const artistInfo = new ArtistInfo(artistName)
 			await artistInfo.init(artist.discogsId)
@@ -60,6 +56,7 @@ export default async (req, res) => {
 			for (const user of users) {
 				const { id: userId, name, email } = user
 				const releases = userReleases.get(userId)
+				await sendEmail(name, email, releases)
 			}
 		}
 	} catch (error) {
@@ -99,7 +96,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 			release.title = spotifyAlbum.name
 			release.artists = spotifyAlbum.artists.map(artist => artist.name)
 			release.release_date = spotifyAlbum.release_date
-			release.album_cover = spotifyAlbum.images[spotifyAlbum.images.length - 1].url
+			release.album_cover = spotifyAlbum.images?.[0]?.url
 			release.spotify_url = spotifyAlbum.external_urls.spotify
 		} else {
 			release.title = releaseInfo.title
