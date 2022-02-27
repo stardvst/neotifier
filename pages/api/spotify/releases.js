@@ -4,7 +4,6 @@ import {
 	selectAllArtists,
 	selectArtistFollowers,
 	updateReleaseCount,
-	executeTransaction,
 	selectUsersByIds,
 	insertArtistReleases
 } from 'lib/db'

@@ -1,6 +1,19 @@
 {
-  "extends": "next/core-web-vitals",
+  "extends": ["next", "next/core-web-vitals", "eslint:recommended", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "rules": {
+    "no-unused-vars": "error",
     "semi": ["error", "never"],
     "import/no-anonymous-default-export": ["error", {
       "allowArrowFunction": true

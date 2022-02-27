@@ -8,7 +8,9 @@
     "dev": "next dev",
     "build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start -p $PORT",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install",
+    "pre-commit": "next lint"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.2",
@@ -27,8 +29,10 @@
     "react-spinners": "^0.11.0"
   },
   "devDependencies": {
-    "eslint": "8.3.0",
+    "eslint": "<8.0.0",
     "eslint-config-next": "12.0.4",
+    "eslint-config-prettier": "^8.4.0",
+    "husky": "^7.0.4",
     "prettier": "2.5.0",
     "prisma": "^3.9.1"
   }
