@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Artist" ALTER COLUMN "discogsId" DROP NOT NULL,
+ALTER COLUMN "discogsId" SET DEFAULT 0;

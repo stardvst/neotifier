@@ -59,7 +59,7 @@ model Artist {
   id           String @id @default(cuid())
   name         String @unique
   spotifyId    String @unique
-  discogsId    Int
+  discogsId    Int?   @default(0)
   releaseCount Int    @default(0)
   followers    User[]
 }

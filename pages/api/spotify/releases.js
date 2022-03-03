@@ -9,6 +9,8 @@ import {
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
 
+const featRegexp = / \(feat\. .*\)/
+
 export default async (req, res) => {
 	if (req.method !== 'GET') return res.status(200).json({ message: 'OK' })
 
@@ -88,19 +90,20 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 		const releaseInfo = await getReleaseInfo(newRelease.resource_url)
 		release.genres = releaseInfo.genres
 
-		if (spotifyAlbumTitles.has(newRelease.title)) {
-			const spotifyAlbumIdx = spotifyAlbumTitles.get(newRelease.title)
+		const albumTitle = newRelease.title.toLowerCase()
+		if (spotifyAlbumTitles.has(albumTitle)) {
+			const spotifyAlbumIdx = spotifyAlbumTitles.get(albumTitle)
 			const spotifyAlbum = allSpotifyAlbums[spotifyAlbumIdx]
 
 			release.title = spotifyAlbum.name
 			release.artists = spotifyAlbum.artists.map(artist => artist.name)
-			release.release_date = spotifyAlbum.release_date
+			release.release_date = spotifyAlbum.release_date ?? 0
 			release.album_cover = spotifyAlbum.images?.[0]?.url
 			release.spotify_url = spotifyAlbum.external_urls.spotify
 		} else {
 			release.title = releaseInfo.title
 			release.artists = releaseInfo.artists.map(artist => artist.name)
-			release.release_date = releaseInfo.released
+			release.release_date = releaseInfo.released ?? 0
 			release.album_cover = releaseInfo.images?.[0]?.uri
 			release.discogs_url = releaseInfo.uri
 		}
@@ -115,11 +118,9 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 }
 
 const getSpotifyAlbumTitleIndexes = spotifyAlbums => {
-	let albumIdx = 0
-	const spotifyAlbumTitles = new Map()
-	for (const album of spotifyAlbums) {
-		spotifyAlbumTitles.set(album.name, albumIdx)
-		++albumIdx
-	}
-	return spotifyAlbumTitles
+	return spotifyAlbums.reduce((spotifyAlbumTitles, album, idx) => {
+		const albumTitle = album.name.toLowerCase().replace(featRegexp, '')
+		spotifyAlbumTitles.set(albumTitle, idx)
+		return spotifyAlbumTitles
+	}, new Map())
 }
