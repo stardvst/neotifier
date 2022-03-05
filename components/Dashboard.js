@@ -1,9 +1,19 @@
-import { Box, Text } from '@chakra-ui/layout'
+import { Box, Heading, Grid } from '@chakra-ui/layout'
+import Meta from 'components/Meta'
+import Album from './Album'
 
-const Dashboard = () => {
+const Dashboard = ({ releases }) => {
 	return (
-		<Box my="14">
-			<Text>dashboard</Text>
+		<Box>
+			<Meta title="Dashboard" />
+			<Heading as="h3" fontSize="2xl" mb="10">
+				Releases for you
+			</Heading>
+			<Grid templateColumns="repeat(4, 1fr)" gap={6} justifyItems="center">
+				{releases.map((release, idx) => (
+					<Album key={idx} {...release} />
+				))}
+			</Grid>
 		</Box>
 	)
 }

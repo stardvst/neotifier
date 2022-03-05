@@ -9,6 +9,7 @@ const Profile = ({ user, followings }) => {
 	if (followings.length === 0) {
 		return (
 			<VStack>
+				<Meta title="Profile" />
 				<Text>You don&apos;t follow any artist right now...</Text>
 				<Text>
 					Find and follow your favorite artists on{' '}

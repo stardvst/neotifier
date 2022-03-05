@@ -5,6 +5,7 @@ import {
 	selectArtistFollowers,
 	updateReleaseCount,
 	selectUsersByIds,
+	executeTransaction,
 	insertArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
@@ -46,10 +47,9 @@ export default async (req, res) => {
 			}
 		}
 
-		// TODO: uncomment after testing
-		// if (releaseCountUpdateRequests.length) {
-		// 	await executeTransaction(releaseCountUpdateRequests)
-		// }
+		if (releaseCountUpdateRequests.length) {
+			await executeTransaction(releaseCountUpdateRequests)
+		}
 
 		if (artistReleases.size) {
 			const userReleases = await getReleasesPerUser(artistReleases)

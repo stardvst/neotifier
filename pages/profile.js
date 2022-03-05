@@ -2,8 +2,8 @@ import { getSession } from 'next-auth/react'
 import Profile from 'components/Profile'
 import { fetchUserFollowings, getAccessToken } from 'lib/spotify'
 
-export default function profile({ serverSession, followings }) {
-	return <Profile user={serverSession.user} followings={followings} />
+export default function profile({ user, followings }) {
+	return <Profile user={user} followings={followings} />
 }
 
 export const getServerSideProps = async ({ req }) => {
@@ -23,7 +23,7 @@ export const getServerSideProps = async ({ req }) => {
 
 	return {
 		props: {
-			serverSession,
+			user,
 			followings
 		}
 	}
