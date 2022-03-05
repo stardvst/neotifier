@@ -1,7 +1,6 @@
 import { getSession } from 'next-auth/react'
 import Profile from 'components/Profile'
-import { selectUserFollowingSpotifyIds } from 'lib/db'
-import { getArtistsInfo } from 'lib/spotify'
+import { fetchUserFollowings, getAccessToken } from 'lib/spotify'
 
 export default function profile({ serverSession, followings }) {
 	return <Profile user={serverSession.user} followings={followings} />
@@ -33,8 +32,8 @@ export const getServerSideProps = async ({ req }) => {
 const getFollowings = async user => {
 	try {
 		const { email } = user
-		const artistSpotifyIds = await selectUserFollowingSpotifyIds(email)
-		const artists = await getArtistsInfo(artistSpotifyIds)
+		const accessToken = await getAccessToken(email)
+		const artists = await fetchUserFollowings(accessToken)
 		return artists.map(artist => ({
 			name: artist.name,
 			image: artist.images?.[artist.images.length - 1]?.url
