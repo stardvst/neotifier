@@ -50,6 +50,8 @@ export default async (req, res) => {
 				console.log(`${artistName} has ${artistNewReleases.length} new releases`)
 				artistReleases.set(artistSpotifyId, artistNewReleases)
 				await insertArtistReleases(artist.id, artistNewReleases)
+			} else {
+				console.log(`${artistName} has no new releases`)
 			}
 		}
 
