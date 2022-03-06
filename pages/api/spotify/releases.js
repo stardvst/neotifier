@@ -5,7 +5,7 @@ import {
 	selectArtistFollowers,
 	updateReleaseCount,
 	selectUsersByIds,
-	executeTransaction,
+	//executeTransaction,
 	insertArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
@@ -53,16 +53,16 @@ export default async (req, res) => {
 			}
 		}
 
-		if (releaseCountUpdateRequests.length) {
-			console.log('Updating release counts')
-			await executeTransaction(releaseCountUpdateRequests)
-		}
+		// if (releaseCountUpdateRequests.length) {
+		// 	console.log('updating release counts')
+		// 	await executeTransaction(releaseCountUpdateRequests)
+		// }
 
 		if (artistReleases.size) {
 			const userReleases = await getReleasesPerUser(artistReleases)
 			const users = await selectUsersByIds(...userReleases.keys())
 			for (const user of users) {
-				console.log(`Preparing to send email to ${user.email}`)
+				console.log(`preparing to send email to ${user.email}`)
 				const { id: userId, name, email } = user
 				const releases = userReleases.get(userId)
 				await sendEmail(name, email, releases)
