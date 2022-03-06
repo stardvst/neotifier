@@ -9,6 +9,7 @@ import {
 	insertArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
+import { dateDiffInDays } from 'lib/util'
 
 const featRegexp = / \(feat\. .*\)/
 
@@ -36,7 +37,8 @@ export default async (req, res) => {
 			}
 
 			const latestReleases = artistInfo.getLatestReleases()
-			const newReleases = latestReleases.slice(0, releaseCountDiff)
+			const diffReleases = latestReleases.slice(0, releaseCountDiff)
+			const newReleases = filterOldReleases(diffReleases)
 
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
 			const artistNewReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
@@ -123,4 +125,8 @@ const getSpotifyAlbumTitleIndexes = spotifyAlbums => {
 		spotifyAlbumTitles.set(albumTitle, idx)
 		return spotifyAlbumTitles
 	}, new Map())
+}
+
+const filterOldReleases = releases => {
+	return releases.filter(release => dateDiffInDays(new Date(release.date), new Date()) <= 7)
 }
