@@ -21,9 +21,12 @@ export default async (req, res) => {
 		const artistReleases = new Map()
 
 		const artists = await selectAllArtists()
+		const artistCount = artists.length
+		let artistIdx = 0
 		for (const artist of artists) {
 			const { name: artistName, spotifyId: artistSpotifyId } = artist
 
+			console.log(`${++artistIdx}/${artistCount} ${artistName}`)
 			const artistInfo = new ArtistInfo(artistName)
 			await artistInfo.init(artist.discogsId)
 
@@ -44,12 +47,14 @@ export default async (req, res) => {
 			const artistNewReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
 
 			if (artistNewReleases.length) {
+				console.log(`${artistName} has ${artistNewReleases.length} new releases`)
 				artistReleases.set(artistSpotifyId, artistNewReleases)
 				await insertArtistReleases(artist.id, artistNewReleases)
 			}
 		}
 
 		if (releaseCountUpdateRequests.length) {
+			console.log('Updating release counts')
 			await executeTransaction(releaseCountUpdateRequests)
 		}
 
@@ -57,6 +62,7 @@ export default async (req, res) => {
 			const userReleases = await getReleasesPerUser(artistReleases)
 			const users = await selectUsersByIds(...userReleases.keys())
 			for (const user of users) {
+				console.log(`Preparing to send email to ${user.email}`)
 				const { id: userId, name, email } = user
 				const releases = userReleases.get(userId)
 				await sendEmail(name, email, releases)
