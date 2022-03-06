@@ -1,0 +1,16 @@
+name: Release checker
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"
+  workflow_dispatch:
+
+env:
+  RELEASES_URL: https://neotifier.herokuapp.com/api/spotify/releases
+
+jobs:
+  check-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping releases URL
+        run: curl -X GET ${{ env.RELEASES_URL }}
