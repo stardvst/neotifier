@@ -17,7 +17,6 @@ export default async (req, res) => {
 	if (req.method !== 'GET') return res.status(200).json({ message: 'OK' })
 
 	try {
-		const releaseCountUpdateRequests = []
 		const artistReleases = new Map()
 
 		const artists = await selectAllArtists()
@@ -35,7 +34,8 @@ export default async (req, res) => {
 			const releaseCountDiff = newReleaseCount - prevReleaseCount
 
 			if (releaseCountDiff) {
-				releaseCountUpdateRequests.push(updateReleaseCount(artistSpotifyId, newReleaseCount))
+				console.log(`update release # for ${artistName} ${prevReleaseCount}->${newReleaseCount}`)
+				await updateReleaseCount(artistSpotifyId, newReleaseCount)
 				if (releaseCountDiff < 1) continue
 			}
 
@@ -54,11 +54,6 @@ export default async (req, res) => {
 				console.log(`${artistName} has no new releases`)
 			}
 		}
-
-		// if (releaseCountUpdateRequests.length) {
-		// 	console.log('updating release counts')
-		// 	await executeTransaction(releaseCountUpdateRequests)
-		// }
 
 		if (artistReleases.size) {
 			const userReleases = await getReleasesPerUser(artistReleases)
