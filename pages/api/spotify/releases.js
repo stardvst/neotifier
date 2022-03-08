@@ -9,7 +9,6 @@ import {
 	insertArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
-import { dateDiffInDays } from 'lib/util'
 
 const featRegexp = / \(feat\. .*\)/
 
@@ -24,6 +23,7 @@ export default async (req, res) => {
 		let artistIdx = 0
 		for (const artist of artists) {
 			const { name: artistName, spotifyId: artistSpotifyId } = artist
+			if (artistName !== 'Stromae') continue
 
 			console.log(`${++artistIdx}/${artistCount} ${artistName}`)
 			const artistInfo = new ArtistInfo(artistName)
@@ -33,18 +33,21 @@ export default async (req, res) => {
 			const prevReleaseCount = artist.releaseCount
 			const releaseCountDiff = newReleaseCount - prevReleaseCount
 
-			if (releaseCountDiff) {
-				console.log(`update release # for ${artistName} ${prevReleaseCount}->${newReleaseCount}`)
-				await updateReleaseCount(artistSpotifyId, newReleaseCount)
-				if (releaseCountDiff < 1) continue
+			if (releaseCountDiff < 1) {
+				console.log(`${artistName} has no newly added releases`)
+				continue
 			}
+
+			console.log(`update release count for ${artistName} ${prevReleaseCount}->${newReleaseCount}`)
+			await updateReleaseCount(artistSpotifyId, newReleaseCount)
 
 			const latestReleases = artistInfo.getLatestReleases()
 			const diffReleases = latestReleases.slice(0, releaseCountDiff)
 			const newReleases = filterOldReleases(diffReleases)
-
-			console.log(diffReleases)
-			console.log(newReleases)
+			if (!newReleases.length) {
+				console.log(`${artistName} has no new releases`)
+				continue
+			}
 
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
 			const artistNewReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
@@ -53,8 +56,6 @@ export default async (req, res) => {
 				console.log(`${artistName} has ${artistNewReleases.length} new releases`)
 				artistReleases.set(artistSpotifyId, artistNewReleases)
 				await insertArtistReleases(artist.id, artistNewReleases)
-			} else {
-				console.log(`${artistName} has no new releases`)
 			}
 		}
 
@@ -134,5 +135,5 @@ const getSpotifyAlbumTitleIndexes = spotifyAlbums => {
 }
 
 const filterOldReleases = releases => {
-	return releases.filter(release => dateDiffInDays(new Date(release.date), new Date()) <= 7)
+	return releases.filter(release => release.year === new Date().getFullYear())
 }
