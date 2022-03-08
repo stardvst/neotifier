@@ -23,7 +23,6 @@ export default async (req, res) => {
 		let artistIdx = 0
 		for (const artist of artists) {
 			const { name: artistName, spotifyId: artistSpotifyId } = artist
-			if (artistName !== 'Stromae') continue
 
 			console.log(`${++artistIdx}/${artistCount} ${artistName}`)
 			const artistInfo = new ArtistInfo(artistName)
