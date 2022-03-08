@@ -43,6 +43,9 @@ export default async (req, res) => {
 			const diffReleases = latestReleases.slice(0, releaseCountDiff)
 			const newReleases = filterOldReleases(diffReleases)
 
+			console.log(diffReleases)
+			console.log(newReleases)
+
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
 			const artistNewReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
 
