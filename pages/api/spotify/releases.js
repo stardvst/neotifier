@@ -9,6 +9,7 @@ import {
 	insertArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
+import { isDateCurrentYear, todayDate } from 'lib/util'
 
 const featRegexp = / \(feat\. .*\)/
 
@@ -105,13 +106,13 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 
 			release.title = spotifyAlbum.name
 			release.artists = spotifyAlbum.artists.map(artist => artist.name)
-			release.release_date = spotifyAlbum.release_date ?? 0
+			release.release_date = spotifyAlbum.release_date ?? todayDate()
 			release.album_cover = spotifyAlbum.images?.[0]?.url
 			release.spotify_url = spotifyAlbum.external_urls.spotify
 		} else {
 			release.title = releaseInfo.title
 			release.artists = releaseInfo.artists.map(artist => artist.name)
-			release.release_date = releaseInfo.released ?? 0
+			release.release_date = releaseInfo.released ?? todayDate()
 			release.album_cover = releaseInfo.images?.[0]?.uri
 			release.discogs_url = releaseInfo.uri
 		}
@@ -120,7 +121,9 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 			// TODO: set default album cover or retrieve album cover
 		}
 
-		artistNewReleases.push(release)
+		if (isDateCurrentYear(release.release_date)) {
+			artistNewReleases.push(release)
+		}
 	}
 	return artistNewReleases
 }
