@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  RELEASES_URL: https://neotifier.herokuapp.com/api/spotify/releases
+  RELEASES_URL: https://neotifier.herokuapp.com/api/spotify/check-releases
 
 jobs:
   check-releases:
