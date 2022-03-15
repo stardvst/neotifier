@@ -5,13 +5,15 @@ import {
 	selectArtistFollowers,
 	updateReleaseCount,
 	selectUsersByIds,
-	//executeTransaction,
 	insertArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
-import { isDateCurrentYear, todayDate } from 'lib/util'
-
-const featRegexp = / \(feat\. .*\)/
+import {
+	isDateCurrentYear,
+	normalizeDiscogsAlbumTitle,
+	normalizeSpotifyAlbumTitle,
+	todayDate
+} from 'lib/util'
 
 export default async (req, res) => {
 	if (req.method !== 'GET') return res.status(200).json({ message: 'OK' })
@@ -99,7 +101,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 		const releaseInfo = await getReleaseInfo(newRelease.resource_url)
 		release.genres = releaseInfo.genres
 
-		const albumTitle = newRelease.title.toLowerCase()
+		const albumTitle = normalizeDiscogsAlbumTitle(newRelease)
 		if (spotifyAlbumTitles.has(albumTitle)) {
 			const spotifyAlbumIdx = spotifyAlbumTitles.get(albumTitle)
 			const spotifyAlbum = allSpotifyAlbums[spotifyAlbumIdx]
@@ -130,7 +132,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 
 const getSpotifyAlbumTitleIndexes = spotifyAlbums => {
 	return spotifyAlbums.reduce((spotifyAlbumTitles, album, idx) => {
-		const albumTitle = album.name.toLowerCase().replace(featRegexp, '')
+		const albumTitle = normalizeSpotifyAlbumTitle(album)
 		spotifyAlbumTitles.set(albumTitle, idx)
 		return spotifyAlbumTitles
 	}, new Map())
