@@ -5,7 +5,8 @@ import {
 	selectArtistFollowers,
 	updateReleaseCount,
 	selectUsersByIds,
-	insertArtistReleases
+	insertArtistReleases,
+	selectArtistReleases
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
 import {
@@ -52,7 +53,8 @@ export default async (req, res) => {
 			}
 
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
-			const artistNewReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
+			const artistLatestReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
+			const artistNewReleases = await filterExistingReleases(artistLatestReleases, artistName)
 
 			if (artistNewReleases.length) {
 				console.log(`${artistName} has ${artistNewReleases.length} new releases`)
@@ -140,4 +142,10 @@ const getSpotifyAlbumTitleIndexes = spotifyAlbums => {
 
 const filterOldReleases = releases => {
 	return releases.filter(release => release.year === new Date().getFullYear())
+}
+
+const filterExistingReleases = async (releases, artistName) => {
+	const artistExistingReleases = await selectArtistReleases(artistName)
+	const existingReleaseTitles = new Set(artistExistingReleases.map(release => release.title))
+	return releases.filter(release => !existingReleaseTitles.has(release.title))
 }
