@@ -11,6 +11,7 @@ import {
 import { sendEmail } from 'lib/email'
 import {
 	isDateCurrentYear,
+	normalizeApostrophes,
 	normalizeDiscogsAlbumTitle,
 	normalizeSpotifyAlbumTitle,
 	todayDate
@@ -108,7 +109,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 			const spotifyAlbumIdx = spotifyAlbumTitles.get(albumTitle)
 			const spotifyAlbum = allSpotifyAlbums[spotifyAlbumIdx]
 
-			release.title = spotifyAlbum.name
+			release.title = normalizeApostrophes(spotifyAlbum.name)
 			release.artists = spotifyAlbum.artists.map(artist => artist.name)
 			release.release_date = spotifyAlbum.release_date ?? todayDate()
 			release.album_cover = spotifyAlbum.images?.[0]?.url

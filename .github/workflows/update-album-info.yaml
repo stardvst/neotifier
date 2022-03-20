@@ -1,0 +1,16 @@
+name: Update album info
+
+on:
+  schedule:
+    - cron: "0 */1 * * *"
+  workflow_dispatch:
+
+env:
+  UPDATE_ALBUM_INFO_URL: https://neotifier.herokuapp.com/api/spotify/update-album-info
+
+jobs:
+  update-spotify-:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Updating album info
+        run: curl -X POST ${{ env.UPDATE_ALBUM_INFO_URL }}
