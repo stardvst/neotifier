@@ -1,0 +1,16 @@
+name: Release checker
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+env:
+  UPDATE_FOLLOWINGS_URL: https://neotifier.herokuapp.com/api/spotify/update-followings
+
+jobs:
+  update-spotify-:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update followed artists for all users
+        run: curl -X POST ${{ env.UPDATE_FOLLOWINGS_URL }}
