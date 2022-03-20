@@ -1,4 +1,4 @@
-name: Release checker
+name: Update followings
 
 on:
   schedule:
