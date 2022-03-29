@@ -66,6 +66,7 @@ model Artist {
 
 model Release {
   id         Int      @id @default(autoincrement())
+  addedAt    DateTime @default(now())
   title      String
   releasedAt DateTime
   albumCover String?

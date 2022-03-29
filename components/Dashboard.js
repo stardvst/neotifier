@@ -3,6 +3,7 @@ import Meta from 'components/Meta'
 import Album from './Album'
 
 const Dashboard = ({ releases }) => {
+	const releasesByAddedDate = releases.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
 	return (
 		<Box>
 			<Meta title="Dashboard" />
@@ -10,7 +11,7 @@ const Dashboard = ({ releases }) => {
 				Releases for you
 			</Heading>
 			<Grid templateColumns="repeat(4, 1fr)" gap={6} justifyItems="center">
-				{releases.map((release, idx) => (
+				{releasesByAddedDate.map((release, idx) => (
 					<Album key={idx} {...release} />
 				))}
 			</Grid>

@@ -2,7 +2,16 @@ import { Button, Heading, Text, VStack } from '@chakra-ui/react'
 import Image from 'components/Image'
 import Link from 'components/Link'
 
-const Album = ({ title, artists, albumCover, genres, releasedAt, spotifyUrl, discogsUrl }) => {
+const Album = ({
+	title,
+	artists,
+	albumCover,
+	genres,
+	releasedAt,
+	spotifyUrl,
+	discogsUrl,
+	addedAt
+}) => {
 	return (
 		<VStack align="flex-start">
 			<Image src={albumCover} alt={title} width={250} height={250} />
@@ -12,6 +21,7 @@ const Album = ({ title, artists, albumCover, genres, releasedAt, spotifyUrl, dis
 			<Text>{artists.join(', ')}</Text>
 			<Text fontSize={15}>{genres.join(', ')}</Text>
 			<Text fontSize={13}>{releasedAt}</Text>
+			<Text fontSize={13}>Added on {addedAt}</Text>
 			{spotifyUrl && (
 				<Link to={spotifyUrl} props={{ isExternal: true }}>
 					<Button>Open in Spotify</Button>

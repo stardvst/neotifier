@@ -24,6 +24,7 @@ export const getServerSideProps = async ({ req }) => {
 	const userReleases = await selectUserReleases(email)
 	const releases = userReleases.map(release => ({
 		...release,
+		addedAt: dateFormatted(new Date(release.addedAt).toDateString()),
 		releasedAt: dateFormatted(new Date(release.releasedAt).toDateString())
 	}))
 
