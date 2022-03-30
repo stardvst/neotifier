@@ -10,12 +10,14 @@ import {
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
 import {
-	isDateCurrentYear,
+	daysBetweenDates,
 	normalizeApostrophes,
 	normalizeDiscogsAlbumTitle,
 	normalizeSpotifyAlbumTitle,
 	todayDate
 } from 'lib/util'
+
+const RELEASE_FRESHNESS_DAYS = 14
 
 export default async (req, res) => {
 	if (req.method !== 'GET') return res.status(200).json({ message: 'OK' })
@@ -47,14 +49,14 @@ export default async (req, res) => {
 
 			const latestReleases = artistInfo.getLatestReleases()
 			const diffReleases = latestReleases.slice(0, releaseCountDiff)
-			const newReleases = filterOldReleases(diffReleases)
-			if (!newReleases.length) {
+			const thisYearReleases = filterThisYearReleases(diffReleases)
+			if (!thisYearReleases.length) {
 				console.log(`${artistName} has no new releases`)
 				continue
 			}
 
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
-			const artistLatestReleases = await getArtistNewReleases(newReleases, allSpotifyAlbums)
+			const artistLatestReleases = await getArtistNewReleases(thisYearReleases, allSpotifyAlbums)
 			const artistNewReleases = await filterExistingReleases(artistLatestReleases, artistName)
 
 			if (artistNewReleases.length) {
@@ -126,7 +128,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 			// TODO: set default album cover or retrieve album cover
 		}
 
-		if (isDateCurrentYear(release.release_date)) {
+		if (daysBetweenDates(Date.now(), release.release_date) <= RELEASE_FRESHNESS_DAYS) {
 			artistNewReleases.push(release)
 		}
 	}
@@ -141,7 +143,7 @@ const getSpotifyAlbumTitleIndexes = spotifyAlbums => {
 	}, new Map())
 }
 
-const filterOldReleases = releases => {
+const filterThisYearReleases = releases => {
 	return releases.filter(release => release.year === new Date().getFullYear())
 }
 
