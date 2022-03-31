@@ -9,7 +9,7 @@ env:
   UPDATE_ALBUM_INFO_URL: https://neotifier.herokuapp.com/api/spotify/update-album-info
 
 jobs:
-  update-spotify-:
+  update-spotify-album-info:
     runs-on: ubuntu-latest
     steps:
       - name: Updating album info

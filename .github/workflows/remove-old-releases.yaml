@@ -1,0 +1,16 @@
+name: Remove old releases
+
+on:
+  schedule:
+    - cron: "0 0 */2 * *"
+  workflow_dispatch:
+
+env:
+  REMOVE_OLD_RELEASES_URL: https://neotifier.herokuapp.com/api/remove-old-releases
+
+jobs:
+  remove-old-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old releases from DB
+        run: curl -X POST ${{ env.REMOVE_OLD_RELEASES_URL }}
