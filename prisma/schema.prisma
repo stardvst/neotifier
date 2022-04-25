@@ -56,12 +56,13 @@ model VerificationToken {
 }
 
 model Artist {
-  id           String @id @default(cuid())
-  name         String @unique
-  spotifyId    String @unique
-  discogsId    Int?   @default(0)
-  releaseCount Int    @default(0)
-  followers    User[]
+  id                  String @id @default(cuid())
+  name                String @unique
+  spotifyId           String @unique
+  spotifyReleaseCount Int    @default(0)
+  discogsId           Int?   @default(0)
+  discogsReleaseCount Int    @default(0)
+  followers           User[]
 }
 
 model Release {

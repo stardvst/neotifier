@@ -1,4 +1,4 @@
-import { getArtistsAllAbums } from 'lib/spotify'
+import { getArtistsAllAbums, SpotifyArtistInfo } from 'lib/spotify'
 import { ArtistInfo, getReleaseInfo } from 'lib/discogs'
 import {
 	selectAllArtists,
@@ -31,32 +31,52 @@ export default async (req, res) => {
 		for (const artist of artists) {
 			const { name: artistName, spotifyId: artistSpotifyId } = artist
 
+			console.log('----------------------------------------------------------------------------')
 			console.log(`${++artistIdx}/${artistCount} ${artistName}`)
 			const artistInfo = new ArtistInfo(artistName)
 			await artistInfo.init(artist.discogsId)
 
-			const newReleaseCount = artistInfo.getReleaseCount()
-			const prevReleaseCount = artist.releaseCount
-			const releaseCountDiff = newReleaseCount - prevReleaseCount
+			const newRelCount = artistInfo.getReleaseCount()
+			const prevRelCount = artist.discogsReleaseCount
+			const relCountDiff = newRelCount - prevRelCount
 
-			if (releaseCountDiff < 1) {
-				console.log(`${artistName} has no newly added releases`)
+			const artistSpotifyInfo = new SpotifyArtistInfo(artistName, artistSpotifyId)
+			await artistSpotifyInfo.init()
+			const newSpotifyRelCount = artistSpotifyInfo.getReleaseCount()
+			const prevSpotifyRelCount = artist.spotifyReleaseCount
+			const spotifyRelCountDiff = newSpotifyRelCount - prevSpotifyRelCount
+
+			if (relCountDiff < 1 && spotifyRelCountDiff < 1) {
 				continue
 			}
 
-			console.log(`update release count for ${artistName} ${prevReleaseCount}->${newReleaseCount}`)
-			await updateReleaseCount(artistSpotifyId, newReleaseCount)
+			console.log(
+				`update release counts: discogs: ${prevRelCount}->${newRelCount}, spotify: ${prevSpotifyRelCount}->${newSpotifyRelCount}`
+			)
+			await updateReleaseCount(artistSpotifyId, newRelCount, newSpotifyRelCount)
 
-			const latestReleases = artistInfo.getLatestReleases()
-			const diffReleases = latestReleases.slice(0, releaseCountDiff)
+			const diffReleases = artistInfo.getLatestReleases().slice(0, relCountDiff)
 			const thisYearReleases = filterThisYearReleases(diffReleases)
-			if (!thisYearReleases.length) {
-				console.log(`${artistName} has no new releases`)
-				continue
-			}
 
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
+			const spotifyReleases = sortByDate(filterSpotifyReleases(allSpotifyAlbums)).slice(
+				0,
+				spotifyRelCountDiff
+			)
+
+			if (!thisYearReleases.length && !spotifyReleases.length) {
+				continue
+			}
+
 			const artistLatestReleases = await getArtistNewReleases(thisYearReleases, allSpotifyAlbums)
+			const latestReleaseTitles = new Set(artistLatestReleases.map(release => release.title))
+			const spotifyOnlyReleases = spotifyReleases.filter(
+				release => !latestReleaseTitles.has(release.title)
+			)
+
+			if (spotifyOnlyReleases.length) {
+				artistLatestReleases.push(...spotifyOnlyReleases)
+			}
 			const artistNewReleases = await filterExistingReleases(artistLatestReleases, artistName)
 
 			if (artistNewReleases.length) {
@@ -102,7 +122,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 	const spotifyAlbumTitles = getSpotifyAlbumTitleIndexes(allSpotifyAlbums)
 
 	for (const newRelease of newReleases) {
-		const release = {}
+		let release = {}
 		const releaseInfo = await getReleaseInfo(newRelease.resource_url)
 		release.genres = releaseInfo.genres
 
@@ -110,12 +130,7 @@ const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
 		if (spotifyAlbumTitles.has(albumTitle)) {
 			const spotifyAlbumIdx = spotifyAlbumTitles.get(albumTitle)
 			const spotifyAlbum = allSpotifyAlbums[spotifyAlbumIdx]
-
-			release.title = normalizeApostrophes(spotifyAlbum.name)
-			release.artists = spotifyAlbum.artists.map(artist => artist.name)
-			release.release_date = spotifyAlbum.release_date ?? todayDate()
-			release.album_cover = spotifyAlbum.images?.[0]?.url
-			release.spotify_url = spotifyAlbum.external_urls.spotify
+			release = { ...release, ...createRelease(spotifyAlbum) }
 		} else {
 			release.title = releaseInfo.title
 			release.artists = releaseInfo.artists.map(artist => artist.name)
@@ -147,8 +162,28 @@ const filterThisYearReleases = releases => {
 	return releases.filter(release => release.year === new Date().getFullYear())
 }
 
+const filterSpotifyReleases = releases =>
+	releases
+		.filter(release => daysBetweenDates(Date.now(), release.release_date) <= RELEASE_FRESHNESS_DAYS)
+		.filter(release => release.album_type !== 'compilation')
+		.filter(release => release.artists[0].name !== 'Various Artists')
+		.map(release => ({ genres: [], ...createRelease(release) }))
+
 const filterExistingReleases = async (releases, artistName) => {
 	const artistExistingReleases = await selectArtistReleases(artistName)
 	const existingReleaseTitles = new Set(artistExistingReleases.map(release => release.title))
 	return releases.filter(release => !existingReleaseTitles.has(release.title))
+}
+
+const sortByDate = releases =>
+	releases.sort((a, b) => new Date(a.release_date) - new Date(b.release_date) > 0)
+
+const createRelease = spotifyAlbum => {
+	return {
+		title: normalizeApostrophes(spotifyAlbum.name),
+		artists: spotifyAlbum.artists.map(artist => artist.name),
+		release_date: spotifyAlbum.release_date ?? todayDate(),
+		album_cover: spotifyAlbum.images?.[0]?.url,
+		spotify_url: spotifyAlbum.external_urls.spotify
+	}
 }
