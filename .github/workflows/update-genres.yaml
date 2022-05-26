@@ -1,0 +1,16 @@
+name: Update album genres
+
+on:
+  schedule:
+    - cron: "0 0,12 * * *" # twice a day
+  workflow_dispatch:
+
+env:
+  UPDATE_GENRES_URL: https://neotifier.herokuapp.com/api/update-genres
+
+jobs:
+  update-album-genres:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update genres for albums not having genre
+        run: curl -X POST ${{ env.UPDATE_GENRES_URL }}

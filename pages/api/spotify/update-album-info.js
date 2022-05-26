@@ -1,4 +1,4 @@
-import { selectArtistSpotifyId, selectReleasesNotOnSpotify, updateReleaseSpotifyInfo } from 'lib/db'
+import { selectArtistInfo, selectReleasesNotOnSpotify, updateReleaseSpotifyInfo } from 'lib/db'
 import { getArtistsAllAbums } from 'lib/spotify'
 import { normalizeSpotifyAlbumTitle, normalizeDiscogsAlbumTitle } from 'lib/util'
 
@@ -9,7 +9,7 @@ export default async (req, res) => {
 		const albumsNotOnSpotify = await selectReleasesNotOnSpotify()
 		console.log(`${albumsNotOnSpotify.length} albums not on spotify`)
 		for (const album of albumsNotOnSpotify) {
-			const artistSpotifyId = await selectArtistSpotifyId(album.artistId)
+			const { spotifyId: artistSpotifyId } = await selectArtistInfo(album.artistId)
 			const allAlbums = await getArtistsAllAbums(artistSpotifyId)
 			const albumTitle = normalizeDiscogsAlbumTitle(album)
 			const spotifyAlbum = allAlbums.find(album => normalizeSpotifyAlbumTitle(album) === albumTitle)
