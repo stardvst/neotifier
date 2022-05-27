@@ -59,7 +59,7 @@ export default async (req, res) => {
 			const thisYearReleases = filterThisYearReleases(diffReleases)
 
 			const allSpotifyAlbums = await getArtistsAllAbums(artistSpotifyId)
-			const spotifyReleases = sortByDate(filterSpotifyReleases(allSpotifyAlbums)).slice(
+			const spotifyReleases = sortByDate(filterSpotifyReleases(artistName, allSpotifyAlbums)).slice(
 				0,
 				spotifyRelCountDiff
 			)
@@ -68,7 +68,11 @@ export default async (req, res) => {
 				continue
 			}
 
-			const artistLatestReleases = await getArtistNewReleases(thisYearReleases, allSpotifyAlbums)
+			const artistLatestReleases = await getArtistNewReleases(
+				artistName,
+				thisYearReleases,
+				allSpotifyAlbums
+			)
 			const latestReleaseTitles = new Set(artistLatestReleases.map(release => release.title))
 			const spotifyOnlyReleases = spotifyReleases.filter(
 				release => !latestReleaseTitles.has(release.title)
@@ -117,27 +121,23 @@ const getReleasesPerUser = async artistReleases => {
 	return userReleases
 }
 
-const getArtistNewReleases = async (newReleases, allSpotifyAlbums) => {
+const getArtistNewReleases = async (artistName, newReleases, allSpotifyAlbums) => {
 	const artistNewReleases = []
 	const spotifyAlbumTitles = getSpotifyAlbumTitleIndexes(allSpotifyAlbums)
 
 	for (const newRelease of newReleases) {
 		let release = {}
-		const releaseInfo = await getReleaseInfo(newRelease.resource_url)
-		release.genres = releaseInfo.genres
+		const discogsAlbum = await getReleaseInfo(newRelease.resource_url)
 
 		const albumTitle = normalizeDiscogsAlbumTitle(newRelease)
 		if (spotifyAlbumTitles.has(albumTitle)) {
 			const spotifyAlbumIdx = spotifyAlbumTitles.get(albumTitle)
 			const spotifyAlbum = allSpotifyAlbums[spotifyAlbumIdx]
-			release = { ...release, ...createRelease(spotifyAlbum) }
+			release = createReleaseFromSpotifyAlbum(artistName, spotifyAlbum)
 		} else {
-			release.title = releaseInfo.title
-			release.artists = releaseInfo.artists.map(artist => artist.name)
-			release.release_date = releaseInfo.released ?? todayDate()
-			release.album_cover = releaseInfo.images?.[0]?.uri
-			release.discogs_url = releaseInfo.uri
+			release = createReleaseFromDiscogsAlbum(artistName, discogsAlbum)
 		}
+		release.genres = discogsAlbum.genres
 
 		if (!release.album_cover) {
 			// TODO: set default album cover or retrieve album cover
@@ -162,28 +162,42 @@ const filterThisYearReleases = releases => {
 	return releases.filter(release => release.year === new Date().getFullYear())
 }
 
-const filterSpotifyReleases = releases =>
+const filterSpotifyReleases = (artistName, releases) =>
 	releases
 		.filter(release => daysBetweenDates(Date.now(), release.release_date) <= RELEASE_FRESHNESS_DAYS)
 		.filter(release => release.album_type !== 'compilation')
 		.filter(release => release.artists[0].name !== 'Various Artists')
-		.map(release => ({ genres: [], ...createRelease(release) }))
+		.map(release => ({ genres: [], ...createReleaseFromSpotifyAlbum(artistName, release) }))
 
 const filterExistingReleases = async (releases, artistName) => {
 	const artistExistingReleases = await selectArtistReleases(artistName)
-	const existingReleaseTitles = new Set(artistExistingReleases.map(release => release.title))
-	return releases.filter(release => !existingReleaseTitles.has(release.title))
+	const existingReleaseTitles = new Set(
+		artistExistingReleases.map(release => normalizeDiscogsAlbumTitle(release.title))
+	)
+	return releases.filter(
+		release => !existingReleaseTitles.has(normalizeDiscogsAlbumTitle(release.title))
+	)
 }
 
 const sortByDate = releases =>
 	releases.sort((a, b) => new Date(a.release_date) - new Date(b.release_date) > 0)
 
-const createRelease = spotifyAlbum => {
+const createReleaseFromSpotifyAlbum = (artistName, spotifyAlbum) => {
 	return {
 		title: normalizeApostrophes(spotifyAlbum.name),
-		artists: spotifyAlbum.artists.map(artist => artist.name),
+		artists: [artistName, ...spotifyAlbum.artists.map(artist => artist.name)],
 		release_date: spotifyAlbum.release_date ?? todayDate(),
 		album_cover: spotifyAlbum.images?.[0]?.url,
 		spotify_url: spotifyAlbum.external_urls.spotify
+	}
+}
+
+const createReleaseFromDiscogsAlbum = (artistName, releaseInfo) => {
+	return {
+		title: releaseInfo.title,
+		artists: [artistName, ...releaseInfo.artists.map(artist => artist.name)],
+		release_date: releaseInfo.released ?? todayDate(),
+		album_cover: releaseInfo.images?.[0]?.uri,
+		discogs_url: releaseInfo.uri
 	}
 }
