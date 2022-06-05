@@ -172,11 +172,9 @@ const filterSpotifyReleases = (artistName, releases) =>
 const filterExistingReleases = async (releases, artistName) => {
 	const artistExistingReleases = await selectArtistReleases(artistName)
 	const existingReleaseTitles = new Set(
-		artistExistingReleases.map(release => normalizeDiscogsAlbumTitle(release.title))
+		artistExistingReleases.map(release => normalizeDiscogsAlbumTitle(release))
 	)
-	return releases.filter(
-		release => !existingReleaseTitles.has(normalizeDiscogsAlbumTitle(release.title))
-	)
+	return releases.filter(release => !existingReleaseTitles.has(normalizeDiscogsAlbumTitle(release)))
 }
 
 const sortByDate = releases =>
