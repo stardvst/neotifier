@@ -6,7 +6,8 @@ import {
 	updateReleaseCount,
 	selectUsersByIds,
 	insertArtistReleases,
-	selectArtistReleases
+	selectArtistReleases,
+	executeTransaction
 } from 'lib/db'
 import { sendEmail } from 'lib/email'
 import {
@@ -23,6 +24,7 @@ export default async (req, res) => {
 	if (req.method !== 'GET') return res.status(200).json({ message: 'OK' })
 
 	try {
+		const queries = []
 		const artistReleases = new Map()
 
 		const artists = await selectAllArtists()
@@ -53,7 +55,7 @@ export default async (req, res) => {
 			console.log(
 				`update release counts: discogs: ${prevRelCount}->${newRelCount}, spotify: ${prevSpotifyRelCount}->${newSpotifyRelCount}`
 			)
-			await updateReleaseCount(artistSpotifyId, newRelCount, newSpotifyRelCount)
+			queries.push(updateReleaseCount(artistSpotifyId, newRelCount, newSpotifyRelCount))
 
 			const diffReleases = artistInfo.getLatestReleases().slice(0, relCountDiff)
 			const thisYearReleases = filterThisYearReleases(diffReleases)
@@ -86,7 +88,7 @@ export default async (req, res) => {
 			if (artistNewReleases.length) {
 				console.log(`${artistName} has ${artistNewReleases.length} new releases`)
 				artistReleases.set(artistSpotifyId, artistNewReleases)
-				await insertArtistReleases(artist.id, artistNewReleases)
+				queries.push(insertArtistReleases(artist.id, artistNewReleases))
 			}
 		}
 
@@ -99,6 +101,10 @@ export default async (req, res) => {
 				const releases = userReleases.get(userId)
 				await sendEmail(name, email, releases)
 			}
+		}
+
+		if (queries.length) {
+			await executeTransaction(queries)
 		}
 	} catch (error) {
 		return res.status(400).json({ message: error })
