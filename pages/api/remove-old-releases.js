@@ -9,6 +9,6 @@ export default async (req, res) => {
 		await deleteReleasesOlderThan(RELEASE_OLDNESS_DAYS)
 		res.status(200).json({ message: 'OK' })
 	} catch (error) {
-		return res.status(400).json({ message: error })
+		return res.status(400).json({ message: error.message, stack: error.stack })
 	}
 }

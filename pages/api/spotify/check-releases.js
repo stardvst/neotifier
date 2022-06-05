@@ -107,7 +107,7 @@ export default async (req, res) => {
 			await executeTransaction(queries)
 		}
 	} catch (error) {
-		return res.status(400).json({ message: error })
+		return res.status(400).json({ message: error.message, stack: error.stack })
 	}
 
 	res.status(200).json({ message: 'OK' })
