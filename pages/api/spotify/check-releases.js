@@ -189,7 +189,7 @@ const sortByDate = releases =>
 const createReleaseFromSpotifyAlbum = (artistName, spotifyAlbum) => {
 	return {
 		title: normalizeApostrophes(spotifyAlbum.name),
-		artists: [artistName, ...spotifyAlbum.artists.map(artist => artist.name)],
+		artists: getArtistsList(artistName, spotifyAlbum.artists),
 		release_date: spotifyAlbum.release_date ?? todayDate(),
 		album_cover: spotifyAlbum.images?.[0]?.url,
 		spotify_url: spotifyAlbum.external_urls.spotify
@@ -199,9 +199,16 @@ const createReleaseFromSpotifyAlbum = (artistName, spotifyAlbum) => {
 const createReleaseFromDiscogsAlbum = (artistName, releaseInfo) => {
 	return {
 		title: releaseInfo.title,
-		artists: [artistName, ...releaseInfo.artists.map(artist => artist.name)],
+		artists: getArtistsList(artistName, releaseInfo.artists),
 		release_date: releaseInfo.released ?? todayDate(),
 		album_cover: releaseInfo.images?.[0]?.uri,
 		discogs_url: releaseInfo.uri
 	}
+}
+
+const getArtistsList = (mainArtistName, artists) => {
+	return [
+		mainArtistName,
+		...artists.map(artist => artist.name).filter(artist => artist !== mainArtistName)
+	]
 }
