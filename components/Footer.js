@@ -5,7 +5,7 @@ import Link from 'components/Link'
 
 const Footer = () => {
 	return (
-		<Flex h={16} justify="center">
+		<Flex h={16} justify="center" as="footer" borderTop="1px solid black">
 			<HStack justify="center" align="center">
 				<Text>© Neotifier</Text>
 				<Text>|</Text>
@@ -13,7 +13,7 @@ const Footer = () => {
 				<Text> • </Text>
 				<Link to="/contact">Contact</Link>
 				<Text> • </Text>
-				<Link to="/">Privacy</Link>
+				<Link to="/privacy">Privacy</Link>
 				<Text> • </Text>
 				<Link to="https://www.twitter.com/neotifier">
 					<chakra.span as={Twitter} size={16} color="black" fill="black"></chakra.span>

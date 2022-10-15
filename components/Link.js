@@ -1,7 +1,7 @@
-import { Link as ChakraLink } from '@chakra-ui/layout'
+import { Link as ChakraLink } from '@chakra-ui/react'
 import NextLink from 'next/link'
 
-const Link = ({ to, props, children }) => {
+const Link = ({ to, children, ...props }) => {
 	return (
 		<NextLink href={to} passHref>
 			<ChakraLink {...props}>{children}</ChakraLink>

@@ -1,16 +1,20 @@
-import { Box } from '@chakra-ui/react'
-import Nav from 'components/Nav'
+import { Center, Container, Flex } from '@chakra-ui/react'
+import NavBar from 'components/NavBar'
 import Meta from 'components/Meta'
 import Footer from 'components/Footer'
 
 const Layout = ({ children }) => {
 	return (
-		<>
-			<Meta description="Get instant notifications for new releases from your favorite artists" />
-			<Nav />
-			<Box as="main">{children}</Box>
-			<Footer />
-		</>
+		<Container maxW="container.8xl" padding={0}>
+			<Flex direction="column" minH="100vh">
+				<Meta description="Get instant notifications for new releases from your favorite artists" />
+				<NavBar />
+				<Center as="main" flex={1}>
+					{children}
+				</Center>
+				<Footer />
+			</Flex>
+		</Container>
 	)
 }
 
