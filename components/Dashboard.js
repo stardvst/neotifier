@@ -7,7 +7,7 @@ const Dashboard = ({ releases }) => {
 	return (
 		<Box>
 			<Meta title="Dashboard" />
-			<Heading as="h3" fontSize="2xl" mb="10">
+			<Heading as="h3" fontSize="3xl" my="10">
 				Releases for you
 			</Heading>
 			<Grid templateColumns="repeat(4, 1fr)" gap={6} justifyItems="center">

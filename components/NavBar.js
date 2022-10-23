@@ -8,7 +8,7 @@ import { Text } from '@chakra-ui/layout'
 import ButtonLink from './ButtonLink'
 
 const NeonPinkButton = ({ children, link }) => (
-	<ButtonLink to={link} bgColor="neonPink" bgColorDarker="neonPinkDarker">
+	<ButtonLink to={link} bgColor="neonPink" bgColorHover="neonPinkDarker">
 		{children}
 	</ButtonLink>
 )

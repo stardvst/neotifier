@@ -12,8 +12,8 @@ const styles = {
 
 const fonts = {
 	...chakraTheme.fonts,
-	body: `"Maven Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
-	heading: `"Maven Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`
+	body: `"Lato",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
+	heading: `"Lato",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`
 }
 
 const colors = {
@@ -21,7 +21,10 @@ const colors = {
 	neonPink: '#FF00FF',
 	neonPinkDarker: '#E000E0',
 	neonGreen: '#0DFF51',
-	neonGreenDarker: '#12B33F'
+	neonGreenDarker: '#12B33F',
+	spotify: '#1DB954',
+	spotifyDarker: '#15883E',
+	discogs: '#333333'
 }
 
 const overrides = {

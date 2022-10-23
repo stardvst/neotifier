@@ -2,7 +2,7 @@ import { appName } from 'config'
 import ButtonLink from './ButtonLink'
 
 const WhiteButton = ({ children, link }) => (
-	<ButtonLink to={link} bgColor="white" bgColorDarker="neonPink">
+	<ButtonLink to={link} bgColor="white" bgColorHover="neonPink">
 		{children}
 	</ButtonLink>
 )
