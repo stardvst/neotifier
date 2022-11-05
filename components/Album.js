@@ -2,6 +2,7 @@ import { Container, HStack, Text, Tooltip, VStack } from '@chakra-ui/react'
 import Image from 'components/Image'
 import { DiscogsLogo, SpotifyLogo } from 'lib/icons'
 import ButtonLink from './ButtonLink'
+import { Image as ChakraImage } from '@chakra-ui/react'
 
 const cardSize = 270
 const iconSize = 20
@@ -17,7 +18,10 @@ const Album = ({ title, artists, albumCover, releasedAt, spotifyUrl, discogsUrl 
 			maxWidth="274px"
 		>
 			<Tooltip label={title} hasArrow shouldWrapChildren placement="bottom">
-				<Image src={albumCover} alt={title} width={cardSize} height={cardSize} title={title} />
+				{!discogsUrl && <Image src={albumCover} alt={title} width={cardSize} height={cardSize} />}
+				{discogsUrl && (
+					<ChakraImage src={albumCover} alt={title} width={cardSize} height={cardSize} />
+				)}
 			</Tooltip>
 			<Container>
 				<VStack align="flex-start" overflow="hidden">
