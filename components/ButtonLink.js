@@ -1,5 +1,5 @@
 import { Button } from '@chakra-ui/react'
-import Link from 'components/Link'
+import { useRouter } from 'next/router'
 
 const ButtonLink = ({
 	children,
@@ -11,6 +11,16 @@ const ButtonLink = ({
 	isExternal = false,
 	...props
 }) => {
+	const router = useRouter()
+
+	const handleClick = () => {
+		if (isExternal) {
+			window.open(to, '_blank')
+		} else {
+			router.push(to)
+		}
+	}
+
 	return (
 		<Button
 			borderColor="black"
@@ -25,23 +35,20 @@ const ButtonLink = ({
 			w={['100%', '100%', 'auto']}
 			boxShadow="3px 3px 0 black"
 			_hover={{
-				bg: bgColor,
+				bg: bgColorHover,
 				boxShadow: 'none',
-				bgColor: bgColorHover,
 				color: textColorHover
 			}}
 			_active={{
-				bg: bgColor,
+				bg: bgColorHover,
 				boxShadow: 'none',
-				bgColor: bgColorHover,
 				color: textColorHover
 			}}
 			transition="background-color 400ms linear, color 200ms linear"
+			onClick={handleClick}
 			{...props}
 		>
-			<Link to={to} _hover={{ textDecoration: 'none' }} isExternal={isExternal} {...props}>
-				{children}
-			</Link>
+			{children}
 		</Button>
 	)
 }
