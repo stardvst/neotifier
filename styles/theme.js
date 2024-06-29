@@ -22,8 +22,10 @@ const colors = {
 	neonPinkDarker: '#E000E0',
 	neonGreen: '#0DFF51',
 	neonGreenDarker: '#12B33F',
+	neonPurple: '#9D00FF',
 	spotify: '#1DB954',
-	spotifyDarker: '#15883E',
+	spotifyDarker: '#19A054',
+	spotifyExtraDarker: '#15883E',
 	discogs: '#333333'
 }
 

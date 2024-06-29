@@ -5,7 +5,7 @@ import Link from 'components/Link'
 
 const Footer = () => {
 	return (
-		<Flex h={16} justify="center" as="footer" borderTop="1px solid black">
+		<Flex h={16} justify="center" as="footer" borderTop="1px solid black" bg={'white'}>
 			<HStack justify="center" align="center">
 				<Text>© Neotifier</Text>
 				<Text>|</Text>

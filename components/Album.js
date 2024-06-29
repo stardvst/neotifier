@@ -16,6 +16,7 @@ const Album = ({ title, artists, albumCover, releasedAt, spotifyUrl, discogsUrl 
 			borderRadius={6}
 			boxShadow="3px 3px 0 black"
 			maxWidth="274px"
+			bg={'white'}
 		>
 			<Tooltip label={title} hasArrow shouldWrapChildren placement="bottom">
 				{!discogsUrl && <Image src={albumCover} alt={title} width={cardSize} height={cardSize} />}
