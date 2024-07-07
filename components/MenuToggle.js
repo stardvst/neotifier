@@ -3,7 +3,7 @@ import { Menu, X } from 'react-feather'
 
 const MenuToggle = ({ toggle, isOpen }) => {
 	return (
-		<Box display={{ base: 'block', md: 'none' }} onClick={toggle}>
+		<Box display={{ base: 'block', md: 'none' }} onClick={toggle} cursor="pointer">
 			{isOpen ? <X /> : <Menu />}
 		</Box>
 	)

@@ -6,7 +6,7 @@ import Loading from 'components/Loading'
 import { ListItem, ListIcon, UnorderedList, Center } from '@chakra-ui/react'
 import { RightHandEmoji } from 'lib/emojis'
 
-const RouteLink = ({ to }) => (
+const RouteLink = ({ to, children }) => (
 	<Link to={to}>
 		<Code
 			bgColor="neonGreen"
@@ -21,7 +21,7 @@ const RouteLink = ({ to }) => (
 				bgColor: 'neonGreenDarker'
 			}}
 		>
-			<Text fontSize="5xl">{to}</Text>
+			<Text fontSize="5xl">{children}</Text>
 		</Code>
 	</Link>
 )
@@ -39,12 +39,12 @@ const PageRouter = () => {
 			<Center>
 				<UnorderedList spacing={5} styleType="none">
 					<ListItem>
-						<ListIcon as={RightHandEmoji} /> go to your <RouteLink to="/dashboard" /> to view new
-						releases.
+						<ListIcon as={RightHandEmoji} aria-label="Right hand pointing emoji" /> go to your{' '}
+						<RouteLink to="/dashboard">/dashboard</RouteLink> to view new releases.
 					</ListItem>
 					<ListItem>
-						<ListIcon as={RightHandEmoji} /> go to your <RouteLink to="/profile" /> to view or
-						change artists
+						<ListIcon as={RightHandEmoji} aria-label="Right hand pointing emoji" /> go to your{' '}
+						<RouteLink to="/profile">/profile</RouteLink> to view or change artists
 					</ListItem>
 				</UnorderedList>
 			</Center>

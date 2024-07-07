@@ -65,7 +65,7 @@ const Login = () => {
 							borderRadius="full"
 							bgColor="spotify"
 							bgColorHover="spotifyDarker"
-							_focus={{ bgColor: 'sspotifyExtraDarker' }}
+							_focus={{ bgColor: 'spotifyExtraDarker' }}
 							onClick={() => signIn('spotify')}
 							to=""
 						>

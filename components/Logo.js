@@ -1,12 +1,11 @@
-import { appName } from 'config'
-import ButtonLink from './ButtonLink'
+import { Text, Link } from '@chakra-ui/react'
 
-const WhiteButton = ({ children, link }) => (
-	<ButtonLink to={link} bgColor="white" bgColorHover="neonPink">
-		{children}
-	</ButtonLink>
+const Logo = ({ appName, color, href = '/' }) => (
+	<Link href={href} color={color} _hover={{ textDecoration: 'none' }}>
+		<Text fontSize="4xl" fontWeight="bold" fontFamily="Inter">
+			{appName}
+		</Text>
+	</Link>
 )
-
-const Logo = () => <WhiteButton link="/">{appName}</WhiteButton>
 
 export default Logo

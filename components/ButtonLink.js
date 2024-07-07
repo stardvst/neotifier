@@ -1,56 +1,39 @@
 import { Button } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 
-const ButtonLink = ({
-	children,
-	to,
-	bgColor,
-	bgColorHover,
-	textColor = 'black',
-	textColorHover = 'currentColor',
-	isExternal = false,
-	...props
-}) => {
-	const router = useRouter()
-
-	const handleClick = () => {
-		if (isExternal) {
-			window.open(to, '_blank')
-		} else {
-			router.push(to)
-		}
-	}
-
-	return (
-		<Button
-			borderColor="black"
-			borderWidth={2}
-			borderRadius={6}
-			bgColor={bgColor}
-			color={textColor}
-			size="md"
-			mx={2}
-			px={10}
-			height={12}
-			w={['100%', '100%', 'auto']}
-			boxShadow="3px 3px 0 black"
-			_hover={{
-				bg: bgColorHover,
-				boxShadow: 'none',
-				color: textColorHover
-			}}
-			_active={{
-				bg: bgColorHover,
-				boxShadow: 'none',
-				color: textColorHover
-			}}
-			transition="background-color 400ms linear, color 200ms linear"
-			onClick={handleClick}
-			{...props}
-		>
-			{children}
-		</Button>
-	)
-}
+const ButtonLink = ({ children, link, onClick, bgColor, hoverColor, ...props }) => (
+	<Button
+		as="a"
+		href={link}
+		onClick={onClick}
+		bg={bgColor}
+		color={hoverColor}
+		border="2px solid"
+		borderColor={hoverColor}
+		borderRadius="md"
+		fontSize="md"
+		minW="150px" // Minimum width for consistency
+		h="48px" // Set height to 48px for larger button
+		w={{ base: '100%', md: 'auto' }}
+		px={6} // Increased horizontal padding
+		py={2} // Reduced vertical padding to maintain height
+		boxShadow="md"
+		transition="background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s"
+		_hover={{
+			bg: hoverColor,
+			color: bgColor,
+			transform: 'translateY(-2px)',
+			boxShadow: 'lg'
+		}}
+		_active={{
+			bg: hoverColor,
+			color: bgColor,
+			transform: 'translateY(0)',
+			boxShadow: 'md'
+		}}
+		{...props}
+	>
+		{children}
+	</Button>
+)
 
 export default ButtonLink

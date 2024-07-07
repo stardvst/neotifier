@@ -4,14 +4,8 @@ import { Flex, Stack, Box, Center, Container } from '@chakra-ui/react'
 import Logo from './Logo'
 import { useState } from 'react'
 import MenuToggle from './MenuToggle'
-import { Text } from '@chakra-ui/layout'
 import ButtonLink from './ButtonLink'
-
-const NeonPinkButton = ({ children, link }) => (
-	<ButtonLink to={link} bgColor="neonPink" bgColorHover="neonPinkDarker">
-		{children}
-	</ButtonLink>
-)
+import { appName } from 'config'
 
 const ButtonLinks = ({ links, isOpen }) => (
 	<Box
@@ -24,6 +18,7 @@ const ButtonLinks = ({ links, isOpen }) => (
 			justify={['center', 'space-between', 'flex-end', 'flex-end']}
 			direction={['column', 'column', 'row', 'row']}
 			pt={[4, 4, 0, 0]}
+			w="100%"
 		>
 			{links}
 		</Stack>
@@ -31,8 +26,8 @@ const ButtonLinks = ({ links, isOpen }) => (
 )
 
 const NavBarContainer = ({ children, ...props }) => (
-	<Center borderBottom="1px solid black">
-		<Container maxW="container.8xl">
+	<Center borderBottom="1px solid #E8E8E8">
+		<Container maxW="container.xl">
 			<Flex
 				as="nav"
 				align="center"
@@ -65,14 +60,14 @@ const NavBar = () => {
 	if (isLoading) {
 		return (
 			<NavBarContainer>
-				<Logo />
+				<Logo appName={appName} color="neonPink" />
 			</NavBarContainer>
 		)
 	}
 
 	return (
 		<NavBarContainer>
-			<Logo />
+			<Logo appName={appName} color="neonPink" />
 			<MenuToggle toggle={toggleMenu} isOpen={isMenuOpen} />
 
 			{session && (
@@ -81,13 +76,17 @@ const NavBar = () => {
 						<>
 							{!isLoggedInHomePage && (
 								<>
-									<NeonPinkButton link={'/dashboard'}>dashboard</NeonPinkButton>
-									<NeonPinkButton link={'/profile'}>profile</NeonPinkButton>
+									<ButtonLink link={'/dashboard'} bgColor="white" hoverColor="neonPink">
+										dashboard
+									</ButtonLink>
+									<ButtonLink link={'/profile'} bgColor="white" hoverColor="neonPink">
+										profile
+									</ButtonLink>
 								</>
 							)}
-							<NeonPinkButton link={'/'}>
-								<Text onClick={signOut}>logout</Text>
-							</NeonPinkButton>
+							<ButtonLink link={'/'} bgColor="white" hoverColor="neonPink" onClick={signOut}>
+								logout
+							</ButtonLink>
 						</>
 					}
 					isOpen={isMenuOpen}
@@ -98,9 +97,9 @@ const NavBar = () => {
 				<ButtonLinks
 					links={
 						<>
-							<NeonPinkButton link={'/how-it-works'}>how it works?</NeonPinkButton>
-							<NeonPinkButton link={'/pricing'}>pricing</NeonPinkButton>
-							<NeonPinkButton link={'/contact'}>contact</NeonPinkButton>
+							<ButtonLink link={'/how-it-works'}>how it works?</ButtonLink>
+							<ButtonLink link={'/pricing'}>pricing</ButtonLink>
+							<ButtonLink link={'/contact'}>contact</ButtonLink>
 						</>
 					}
 					isOpen={isMenuOpen}
