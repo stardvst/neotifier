@@ -2,8 +2,8 @@ import { Button } from '@chakra-ui/react'
 
 const ButtonLink = ({ children, link, onClick, bgColor, hoverColor, ...props }) => (
 	<Button
-		as="a"
-		href={link}
+		as={link ? 'a' : 'button'}
+		href={link ?? undefined}
 		onClick={onClick}
 		bg={bgColor}
 		color={hoverColor}

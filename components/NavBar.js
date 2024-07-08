@@ -84,7 +84,7 @@ const NavBar = () => {
 									</ButtonLink>
 								</>
 							)}
-							<ButtonLink link={'/'} bgColor="white" hoverColor="neonPink" onClick={signOut}>
+							<ButtonLink bgColor="white" hoverColor="neonPink" onClick={signOut}>
 								logout
 							</ButtonLink>
 						</>

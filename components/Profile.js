@@ -5,17 +5,14 @@ import { EmptyFollowings, FollowedArtistsGrid } from './Followings'
 
 const Profile = ({ followings }) => {
 	return (
-		<Box px={[4, 8, 16]} py={8} minHeight="100vh">
+		<Box minHeight="100vh">
 			<Meta title="Profile" />
 			<Heading as="h3" fontSize={['2xl', '3xl']} my={10} textAlign="left">
 				Followed Artists
 			</Heading>
-			<Flex flexDir="column" align="top" justify="top">
+			<Flex flexDir="column" align="top" justify="top" width="80vw">
 				{followings.length ? (
-					<>
-						<Box width="full"></Box>
-						<FollowedArtistsGrid followings={followings} onUnfollow={() => {}} />
-					</>
+					<FollowedArtistsGrid followings={followings} onUnfollow={() => {}} />
 				) : (
 					<EmptyFollowings />
 				)}

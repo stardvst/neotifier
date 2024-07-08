@@ -1,4 +1,4 @@
-import { Flex, Grid, Text, VStack, Center } from '@chakra-ui/layout'
+import { Flex, Grid, Text, VStack } from '@chakra-ui/layout'
 import Image from 'components/Image'
 import Link from 'components/Link'
 import Meta from './Meta'
@@ -61,23 +61,20 @@ const FollowedArtist = ({ artist }) => (
 		</VStack>
 	</Flex>
 )
-
 const FollowedArtistsGrid = ({ followings, onUnfollow }) => (
-	<Center>
-		<Grid
-			templateColumns={{
-				base: 'repeat(1, 1fr)',
-				md: 'repeat(2, 1fr)',
-				lg: 'repeat(2, 1fr)',
-				xl: 'repeat(3, 1fr)'
-			}}
-			gap={6}
-		>
-			{followings.map((artist, idx) => (
-				<FollowedArtist key={idx} artist={artist} onUnfollow={onUnfollow} />
-			))}
-		</Grid>
-	</Center>
+	<Grid
+		templateColumns={{
+			base: 'repeat(1, 1fr)',
+			md: 'repeat(2, 1fr)',
+			lg: 'repeat(2, 1fr)',
+			xl: 'repeat(3, 1fr)'
+		}}
+		gap={6}
+	>
+		{followings.map((artist, idx) => (
+			<FollowedArtist key={idx} artist={artist} onUnfollow={onUnfollow} />
+		))}
+	</Grid>
 )
 
 export { EmptyFollowings, FollowedArtistsGrid }
